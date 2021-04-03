@@ -55,7 +55,7 @@ def isSolvable(state):
 
     for i in range(0, len(flattened) - 1):
         for j in range(i + 1, len(flattened)):
-            if flattened[j] > 0 and flattened[j] > flattened[i]:
+            if flattened[i] > 0 and flattened[j] > 0 and flattened[j] > flattened[i]:
                 inv_count += 1
     return inv_count % 2 == 0
 
