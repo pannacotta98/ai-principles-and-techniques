@@ -48,6 +48,16 @@ def num_misplaced_tiles(state):
                 counter += 1
     return counter
 
+def isSolvable(state):
+    inv_count = 0
+    flattened = [item for sublist in state for item in sublist]
+
+    for i in range(0, len(flattened) - 1):
+        for j in range(i + 1, len(flattened)):
+            if flattened[i] > 0 and flattened[j] > 0 and flattened[j] > flattened[i]:
+                inv_count += 1
+    return inv_count % 2 == 0
+
 
 class Node:
     def __init__(self, state, g, h):
@@ -56,7 +66,7 @@ class Node:
         self.state = state
 
     def __lt__(self, other):
-        return (self.g + self.h) < (other.g + self.g)
+        return (self.g + self.h) < (other.g + other.h)
 
     def __str__(self):
         return "g: " + str(self.g) + "\n" + \
@@ -79,11 +89,16 @@ class Node:
     def is_goal_state(self):
         return identical_state(self.state, GOAL_STATE)
 
-
-rands = random.sample(range(0, 9, 1), 9)
-init_state = [[rands[0], rands[1], rands[2]], [
+# Generate solvable puzzle
+print("\n\nGenerating solvable puzzle...")
+init_state = [[]]
+while True:
+    rands = random.sample(range(0, 9, 1), 9)
+    init_state = [[rands[0], rands[1], rands[2]], [
     rands[3], rands[4], rands[5]], [rands[6], rands[7], rands[8]]]
 
+    if isSolvable(init_state):
+        break
 
 start_node = Node(init_state, 0, num_misplaced_tiles(init_state))
 goal_node = Node(GOAL_STATE, 0, 0)
@@ -94,9 +109,10 @@ print(start_node)
 open_list = [start_node]  # All nodes that must still be expanded
 closed_list = []  # Has been visited
 
-print("Running...")
-start_time = time.clock_gettime(time.CLOCK_MONOTONIC)
+print("Solving...")
+start_time = time.perf_counter()
 while len(open_list) > 0:
+    heapq.heapify(open_list)
     q = heapq.heappop(open_list)
 
     possible_moves = q.find_possible_moves()
@@ -105,22 +121,21 @@ while len(open_list) > 0:
             print('REACHED GOAL, state:')
             print(move)
             print("Elapsed time: " +
-                  str(round(time.clock_gettime(time.CLOCK_MONOTONIC) - start_time)) + " seconds.")
+                  str(round(time.perf_counter() - start_time)) + " seconds.")
             quit()
 
-        is_in_closed_list = False
+        state_has_been_seen = False
         for state in closed_list:
             if identical_state(move.state, state):
-                is_in_closed_list = True
+                state_has_been_seen = True
                 break
 
-        is_in_open_list = False
-        for node in open_list:
-            if identical_state(move.state, node.state):
-                is_in_open_list = True
-                break
+        if not state_has_been_seen:
+            for node in open_list:
+                if identical_state(move.state, node.state):
+                    state_has_been_seen = True
+                    break
 
-        if not is_in_closed_list and not is_in_open_list:
+        if not state_has_been_seen:
             heapq.heappush(open_list, move)
-
     closed_list.append(q.state)
