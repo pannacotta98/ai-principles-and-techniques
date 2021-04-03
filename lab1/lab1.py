@@ -49,12 +49,13 @@ def num_misplaced_tiles(state):
     return counter
 
 def isSolvable(state):
+    # Check if the puzzle is solvable by counting inversions
     inv_count = 0
     flattened = [item for sublist in state for item in sublist]
 
     for i in range(0, len(flattened) - 1):
         for j in range(i + 1, len(flattened)):
-            if flattened[i] > 0 and flattened[j] > 0 and flattened[j] > flattened[i]:
+            if flattened[j] > 0 and flattened[j] > flattened[i]:
                 inv_count += 1
     return inv_count % 2 == 0
 
@@ -124,17 +125,12 @@ while len(open_list) > 0:
                   str(round(time.perf_counter() - start_time)) + " seconds.")
             quit()
 
+        # Has the state been processed? (No backtracking)
         state_has_been_seen = False
         for state in closed_list:
             if identical_state(move.state, state):
                 state_has_been_seen = True
                 break
-
-        if not state_has_been_seen:
-            for node in open_list:
-                if identical_state(move.state, node.state):
-                    state_has_been_seen = True
-                    break
 
         if not state_has_been_seen:
             heapq.heappush(open_list, move)
