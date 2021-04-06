@@ -48,6 +48,18 @@ def num_misplaced_tiles(state):
                 counter += 1
     return counter
 
+def manhattan_distance(state):
+    total_distance = 0
+
+    for i in range(1,9):
+        state_ind = index_in_nested_list(state, i)
+        goal_ind = index_in_nested_list(GOAL_STATE, i)
+        x_dist = abs(state_ind[0] - goal_ind[0])
+        y_dist = abs(state_ind[1] - goal_ind[1])
+        total_distance += x_dist + y_dist
+
+    return total_distance
+
 def isSolvable(state):
     # Check if the puzzle is solvable by counting inversions
     inv_count = 0
@@ -75,15 +87,17 @@ class Node:
             + str(self.state[0]) + "\n" + \
             str(self.state[1]) + "\n" + str(self.state[2])
 
-    def find_possible_moves(self):
+    def find_possible_moves(self, heuristic):
         open_pos = index_in_nested_list(self.state, 0)
         possible_moves = []
         for move in POSSIBLE_MOVES:
             possible_moves.append(copy_and_swap(self.state, open_pos, move))
         possible_moves = [move for move in possible_moves if not move == None]
 
-        nodes = [Node(state, self.g + 1, num_misplaced_tiles(state))
-                 for state in possible_moves]
+        # nodes = [Node(state, self.g + 1, heuristic(state))
+        #          for state in possible_moves] # h1
+        nodes = [Node(state, self.g + 1, heuristic(state))
+                 for state in possible_moves] # h2
 
         return nodes
 
@@ -93,6 +107,7 @@ class Node:
 # Generate solvable puzzle
 print("\n\nGenerating solvable puzzle...")
 init_state = [[]]
+debug_start_state = [[2, 5, 0], [1,4,8], [7,3,6]]
 while True:
     rands = random.sample(range(0, 9, 1), 9)
     init_state = [[rands[0], rands[1], rands[2]], [
@@ -101,7 +116,8 @@ while True:
     if isSolvable(init_state):
         break
 
-start_node = Node(init_state, 0, num_misplaced_tiles(init_state))
+HEURISTIC = manhattan_distance
+start_node = Node(init_state, 0, HEURISTIC(init_state))
 goal_node = Node(GOAL_STATE, 0, 0)
 
 print("Starting node:")
@@ -116,7 +132,7 @@ while len(open_list) > 0:
     heapq.heapify(open_list)
     q = heapq.heappop(open_list)
 
-    possible_moves = q.find_possible_moves()
+    possible_moves = q.find_possible_moves(HEURISTIC)
     for move in possible_moves:
         if move.is_goal_state():
             print('REACHED GOAL, state:')
