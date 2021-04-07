@@ -13,10 +13,13 @@
     E.g: A state where tile 3 is in position 7 and everything else is correct. h1 gives the value 1 and h2 gives 4.
     h1 gives the impression that the puzzle is close to being solved even though it isn't. Therefore, h2 gives 
     a more representative value of the state the puzzle is in.
+    Since h2 provides a better estimate of the number of moves needed to solve the puzzle, and the node with the minimum
+    cost is always popped from the open list, less nodes has to be expanded before reaching the goal state.
 
 3. Which of the following heuristics are admissible?
 h3 = (h1+h2)/2
     Since both h1 and h2 are admissable, their mean is too, since the mean can never be larger than the maximum of the values.
+    Therefore it never overestimates the cost.
 
 h4 = 2×h1 - Inadmissable
     | 1 2 3 |
