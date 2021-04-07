@@ -48,10 +48,11 @@ def num_misplaced_tiles(state):
                 counter += 1
     return counter
 
+
 def manhattan_distance(state):
     total_distance = 0
 
-    for i in range(1,9):
+    for i in range(1, 9):
         state_ind = index_in_nested_list(state, i)
         goal_ind = index_in_nested_list(GOAL_STATE, i)
         x_dist = abs(state_ind[0] - goal_ind[0])
@@ -59,6 +60,7 @@ def manhattan_distance(state):
         total_distance += x_dist + y_dist
 
     return total_distance
+
 
 def isSolvable(state):
     # Check if the puzzle is solvable by counting inversions
@@ -97,21 +99,22 @@ class Node:
         # nodes = [Node(state, self.g + 1, heuristic(state))
         #          for state in possible_moves] # h1
         nodes = [Node(state, self.g + 1, heuristic(state))
-                 for state in possible_moves] # h2
+                 for state in possible_moves]  # h2
 
         return nodes
 
     def is_goal_state(self):
         return identical_state(self.state, GOAL_STATE)
 
+
 # Generate solvable puzzle
 print("\n\nGenerating solvable puzzle...")
 init_state = [[]]
-debug_start_state = [[2, 5, 0], [1,4,8], [7,3,6]]
+debug_start_state = [[2, 5, 0], [1, 4, 8], [7, 3, 6]]
 while True:
     rands = random.sample(range(0, 9, 1), 9)
     init_state = [[rands[0], rands[1], rands[2]], [
-    rands[3], rands[4], rands[5]], [rands[6], rands[7], rands[8]]]
+        rands[3], rands[4], rands[5]], [rands[6], rands[7], rands[8]]]
 
     if isSolvable(init_state):
         break
@@ -132,15 +135,15 @@ while len(open_list) > 0:
     heapq.heapify(open_list)
     q = heapq.heappop(open_list)
 
+    if q.is_goal_state():
+        print('REACHED GOAL, state:')
+        print(q)
+        print("Elapsed time: " +
+              str(round(time.perf_counter() - start_time)) + " seconds.")
+        quit()
+
     possible_moves = q.find_possible_moves(HEURISTIC)
     for move in possible_moves:
-        if move.is_goal_state():
-            print('REACHED GOAL, state:')
-            print(move)
-            print("Elapsed time: " +
-                  str(round(time.perf_counter() - start_time)) + " seconds.")
-            quit()
-
         # Has the state been processed? (No backtracking)
         state_has_been_seen = False
         for state in closed_list:
@@ -151,3 +154,5 @@ while len(open_list) > 0:
         if not state_has_been_seen:
             heapq.heappush(open_list, move)
     closed_list.append(q.state)
+
+print(':(')
