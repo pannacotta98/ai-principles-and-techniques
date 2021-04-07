@@ -16,6 +16,16 @@
     Since h2 provides a better estimate of the number of moves needed to solve the puzzle, and the node with the minimum
     cost is always popped from the open list, less nodes has to be expanded before reaching the goal state.
 
+    | 1 2 3 |  | 8 2 3 | 
+    | 4 5 6 |  | 4 5 6 |
+    | 0 7 8 |  | 0 7 1 |
+    h1 = 2     h1 = 2
+    Although both states give has the same heuristic cost the second example clearly requires many more turns to solve. Since
+    h1 doesn't differentiate between this and both states have the same cost it might branch out into the second example which
+    will increase the time needed to solve the puzzle. h2 would simply have concluded that the second example is a bad branch to
+    expand.
+
+
 3. Which of the following heuristics are admissible?
 h3 = (h1+h2)/2
     Since both h1 and h2 are admissable, their mean is too, since the mean can never be larger than the maximum of the values.
