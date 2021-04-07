@@ -110,7 +110,10 @@ class Node:
 # Generate solvable puzzle
 print("\n\nGenerating solvable puzzle...")
 init_state = [[]]
-debug_start_state = [[2, 5, 0], [1, 4, 8], [7, 3, 6]]
+initial_matrix = [[4, 1, 3], [7, 2, 6], [0, 5, 8]]  # easy with 6 moves
+initial_matrix = [[7, 2, 4], [5, 0, 6], [8, 3, 1]]  # medium 20 moves
+initial_matrix = [[6, 4, 7], [8, 5, 0], [3, 2, 1]]  # difficult 31 moves
+initial_matrix = [[8, 6, 7], [2, 5, 4], [3, 0, 1]]  # HARDCORE MODE
 while True:
     rands = random.sample(range(0, 9, 1), 9)
     init_state = [[rands[0], rands[1], rands[2]], [
@@ -119,15 +122,15 @@ while True:
     if isSolvable(init_state):
         break
 
-HEURISTIC = manhattan_distance
-start_node = Node(init_state, 0, HEURISTIC(init_state))
+HEURISTIC = num_misplaced_tiles
+start_node = Node(initial_matrix, 0, HEURISTIC(initial_matrix))
 goal_node = Node(GOAL_STATE, 0, 0)
 
 print("Starting node:")
 print(start_node)
 
 open_list = [start_node]  # All nodes that must still be expanded
-closed_list = []  # Has been visited
+closed_list = set()  # Has been visited
 
 print("Solving...")
 start_time = time.perf_counter()
@@ -145,14 +148,8 @@ while len(open_list) > 0:
     possible_moves = q.find_possible_moves(HEURISTIC)
     for move in possible_moves:
         # Has the state been processed? (No backtracking)
-        state_has_been_seen = False
-        for state in closed_list:
-            if identical_state(move.state, state):
-                state_has_been_seen = True
-                break
-
-        if not state_has_been_seen:
+        if str(move.state) not in closed_list:
             heapq.heappush(open_list, move)
-    closed_list.append(q.state)
+    closed_list.add(str(q.state))
 
 print(':(')
