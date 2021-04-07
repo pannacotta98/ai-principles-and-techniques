@@ -16,7 +16,7 @@
 
 3. Which of the following heuristics are admissible?
 h3 = (h1+h2)/2
-    
+    Since both h1 and h2 are admissable, their mean is too.
 
 h4 = 2×h1 - Inadmissable
     | 1 2 3 |
