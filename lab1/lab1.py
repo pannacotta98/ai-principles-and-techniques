@@ -110,10 +110,11 @@ class Node:
 # Generate solvable puzzle
 print("\n\nGenerating solvable puzzle...")
 init_state = [[]]
-initial_matrix = [[4, 1, 3], [7, 2, 6], [0, 5, 8]]  # easy with 6 moves
+# initial_matrix = [[4, 1, 3], [7, 2, 6], [0, 5, 8]]  # easy with 6 moves
 initial_matrix = [[7, 2, 4], [5, 0, 6], [8, 3, 1]]  # medium 20 moves
-initial_matrix = [[6, 4, 7], [8, 5, 0], [3, 2, 1]]  # difficult 31 moves
-initial_matrix = [[8, 6, 7], [2, 5, 4], [3, 0, 1]]  # HARDCORE MODE
+# initial_matrix = [[6, 4, 7], [8, 5, 0], [3, 2, 1]]  # difficult 31 moves
+# initial_matrix = [[8, 6, 7], [2, 5, 4], [3, 0, 1]]  # HARDCORE MODE
+
 while True:
     rands = random.sample(range(0, 9, 1), 9)
     init_state = [[rands[0], rands[1], rands[2]], [
@@ -122,7 +123,7 @@ while True:
     if isSolvable(init_state):
         break
 
-HEURISTIC = num_misplaced_tiles
+HEURISTIC = manhattan_distance
 start_node = Node(initial_matrix, 0, HEURISTIC(initial_matrix))
 goal_node = Node(GOAL_STATE, 0, 0)
 
@@ -135,14 +136,13 @@ closed_list = set()  # Has been visited
 print("Solving...")
 start_time = time.perf_counter()
 while len(open_list) > 0:
-    heapq.heapify(open_list)
     q = heapq.heappop(open_list)
 
     if q.is_goal_state():
         print('REACHED GOAL, state:')
         print(q)
         print("Elapsed time: " +
-              str(round(time.perf_counter() - start_time)) + " seconds.")
+              str(time.perf_counter() - start_time) + " seconds.")
         quit()
 
     possible_moves = q.find_possible_moves(HEURISTIC)
