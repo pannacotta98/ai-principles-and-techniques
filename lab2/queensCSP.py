@@ -15,7 +15,7 @@ def now():
     
 
 # 1. Set up the problem and starting time
-n = 5
+n = 600
 
 print("\nStarting at at  "+now()[12:20])
 print("problem with n =",n)
@@ -25,8 +25,8 @@ problem = NQueensCSP(n)
 
 # 2. Solve the problem
 solution = backtracking_search(problem)
-#solution = AC3(problem); 
-#solution = min_conflicts(problem)
+# solution = AC3(problem); 
+# solution = min_conflicts(problem)
 
 
 # 3. Print the results

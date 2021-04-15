@@ -22,19 +22,19 @@ print("\nStart:")
 
 # ------ easy
 puzzle = Sudoku('..3.2.6..9..3.5..1..18.64....81.29..7.......8..67.82....26.95..8..2.3..9..5.1.3..')
-# depth-first-graph-search: failed
-# backtracking search: 34 seconds
-# AC3: 0.023 seconds
-# min conflicts: failed - 71 seconds
-# depth first graph search < min conflicts < backtracking search < AC3
+    # depth-first-graph-search: failed
+    # backtracking search: 34 seconds
+    # AC3: 0.023 seconds
+    # min conflicts: failed - 71 seconds
+    # depth first graph search < min conflicts < backtracking search < AC3
 
 # ------ harder
 # puzzle = Sudoku('4173698.5.3..........7......2.....6.....8.4......1.......6.3.7.5..2.....1.4......')
-# depth-first-graph-search: too long
-# backtracking search: too long
-# AC3: failed very fast
-# min conflicts: failed
-# depth first graph search < min conflicts < backtracking search < AC3
+    # depth-first-graph-search: too long
+    # backtracking search: too long
+    # AC3: failed very fast
+    # min conflicts: failed
+    # depth first graph search < min conflicts < backtracking search < AC3
 
 # ------ hardest
 # puzzle = Sudoku('1....7.9..3..2...8..96..5....53..9...1..8...26....4...3......1..4......7..7...3..')
@@ -57,10 +57,17 @@ start = time()
     # Min-conflicts
 
 # Task (b):
-    # first-unassigned-variable + no-inference = 34 sec
-    # first-unassigned-variable + forward-checking = 0.01 sec
-    # mrv + no-inference = 2 min 46 sec
-    # mrv + forward-checking = 0.007 sec    <--- BEST FOR SUDOKU, why doe ???
+    # BT: 34 sec
+    # BT + FC: 0.01 sec (Forward checking)
+    # BT + LCV: 1 min 4 sec (Least constraining value)
+    # BT + MRV: Too long (Minimum remaining values)
+    # BT + FC + MRV: 0.008 sec
+    # BT + FC + LCV: 0.02 sec
+    # BT + FC + LCV + MRV: 0.008 sec
+
+    # The best heuristic setting for backtracking is forward checking + minimum remaining values (BT + FC + MRV)
+    # Forward checking is the most important heuristic for reducing computation time
+    # Combining forward checking with minimum remaining values reduced computational time further
 
 # 2. Solve the puzzle; select ONLY one of the following algorithms
 

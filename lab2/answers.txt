@@ -1,0 +1,49 @@
+# Task (a):
+    # Depth first search has an enourmous amount of leaves to search for solutions
+    # It's an unintelligent brute force algorithm
+    # This makes it unfeasible to use, the search tree is too large
+
+    # Backtracking search is an expansion of depth first search which makes it slightly smarter
+    # Since it immedidiately discards and subtrees with inconsistencies it significantly reduces the search tree
+    # This gives it the second best performance on the easiest puzzle.
+
+    # AC3 can only solve easy sudoku puzzles.
+    # It solves the easiest one very fast and fails the harder one very fast
+
+    # Min-conflicts
+
+# Task (b):
+    # BT: 34 sec
+    # BT + FC: 0.01 sec (Forward checking)
+    # BT + LCV: 1 min 4 sec (Least constraining value)
+    # BT + MRV: Too long (Minimum remaining values)
+    # BT + FC + MRV: 0.008 sec
+    # BT + FC + LCV: 0.02 sec
+    # BT + FC + LCV + MRV: 0.008 sec
+
+    # The best heuristic setting for backtracking is forward checking + minimum remaining values (BT + FC + MRV)
+    # Forward checking is the most important heuristic for reducing computation time
+    # Combining forward checking with minimum remaining values reduced computational time further
+
+# Task (2)
+    # a)
+        # Depth first search tree: n = 28
+        # AC3: Failure no matter the size of n
+        # Min-conflicts search: n > 10000
+        # Backtracking: n = 30
+    
+    # b)
+        # BT + FC: n = 29
+        # BT + LCV: n = 30
+        # BT + MRV: n = 200
+        # BT + MRV + LCV: n = 50
+        # BT + FC + LCV: n = 29
+        # BT + FC + MRV: n = 245
+        # BT + FC + MRV + LCV: n = 600
+
+    # c)
+        # Less than 50
+
+    # d)
+        State-based: There is no set heuristic, it needs to come from the experts of the area/problem at hand.
+        Constraint-based: There are a number of heuristics that works for all CSPs, no area-specific ones are necessary.

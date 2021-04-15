@@ -249,8 +249,9 @@ def mac(csp, var, value, assignment, removals):
 
 def backtracking_search(csp,
                         select_unassigned_variable=mrv,
-                        order_domain_values=unordered_domain_values,
-                        inference=forward_checking):
+                        order_domain_values=lcv,
+                        inference=forward_checking
+):
     """[Figure 6.5]"""
 
     def backtrack(assignment):
