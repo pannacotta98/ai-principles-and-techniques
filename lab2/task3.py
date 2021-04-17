@@ -1,136 +1,166 @@
-
-# def min_conflicts(csp, max_steps=100000):
-#     """Solve a CSP by stochastic hillclimbing on the number of conflicts."""
-#     # Generate a complete assignment for all variables (probably with conflicts)
-#     csp.current = current = {}
-#     for var in csp.variables:
-#         val = min_conflicts_value(csp, var, current)
-#         csp.assign(var, val, current)
-#     # Now repeatedly choose a random conflicted variable and change it
-#     for i in range(max_steps):
-#         conflicted = csp.conflicted_vars(current)
-#         if not conflicted:
-#             return current
-#         var = random.choice(conflicted)
-#         val = min_conflicts_value(csp, var, current)
-#         csp.assign(var, val, current)
-#     return None
-
-
-# def min_conflicts_value(csp, var, current):
-#     """Return the value that will give var the least number of conflicts.
-#     If there is a tie, choose at random."""
-#     return argmin_random_tie(csp.domains[var],
-#                              key=lambda val: csp.nconflicts(var, val, current))
-
+from collections import namedtuple
 import random as rand
 
-class Booking:
-    def __init__(self, block, courses):
-        self.room = block[0]
-        self.time = block[1]
-        self.conflicts = -1
-        self.course = rand.choice(courses)
-        courses.remove(self.course)
+MAX_STEPS_TASK_4 = 100
+solutions = []
 
-    def will_miss_course(self, other):
-        if self.time == other.time:
-            if self.course[2] == other.course[2] and (not self.course[2] == '5' or not other.course[2] == '5'):
-                return True
-        return False
+def count_num_pref_times(solution):
+    counter = 0
+    if solution[RoomSlot("TP51", 9)] == '     ':
+        counter += 1
+    if solution[RoomSlot("SP34", 9)] == '     ':
+        counter += 1
+    if solution[RoomSlot("K3", 9)] == '     ':
+        counter += 1
+    if solution[RoomSlot("TP51", 12)] == '     ':
+        counter += 1
+    if solution[RoomSlot("SP34", 12)] == '     ':
+        counter += 1
+    if solution[RoomSlot("K3", 12)] == '     ':
+        counter += 1
+    if solution[RoomSlot("TP51", 16)] == '     ':
+        counter += 1
+    if solution[RoomSlot("SP34", 16)] == '     ':
+        counter += 1
+    if solution[RoomSlot("K3", 16)] == '     ':
+        counter += 1
+        
+    return counter
 
-    def is_double_booked(self, other):
-        return self.room == other.room and self.time == other.time
+def count_pref_mt500_times(solution):
+    counter = 0
+    if solution[RoomSlot("TP51", 13)] == 'MT501' or solution[RoomSlot("TP51", 13)] == 'MT502':
+        counter += 1
+    if solution[RoomSlot("SP34", 13)] == 'MT501' or solution[RoomSlot("SP34", 13)] == 'MT502':
+        counter += 1
+    if solution[RoomSlot("K3", 13)] == 'MT501' or solution[RoomSlot("K3", 13)] == 'MT502':
+        counter += 1
+    if solution[RoomSlot("TP51", 14)] == 'MT501' or solution[RoomSlot("TP51", 14)] == 'MT502':
+        counter += 1
+    if solution[RoomSlot("SP34", 14)] == 'MT501' or solution[RoomSlot("SP34", 14)] == 'MT502':
+        counter += 1
+    if solution[RoomSlot("K3", 14)] == 'MT501' or solution[RoomSlot("K3", 14)] == 'MT502':
+        counter += 1
+    return counter
 
-    def find_n_conflicts(self, all_other):
-        counter = -1
-        for booking in all_other:
-            if self.is_double_booked(booking):
+def print_timetable(state):
+        '''Print timetable. Currently dependent on the global variable `time_slots`'''
+        print()
+        print('      TP51     SP34     K3')
+        print('      ----     ----     ----')
+        for time_slot in time_slots:
+            print('{:<2}    {}    {}    {}'.format(
+                time_slot, 
+                state[('TP51', time_slot)],
+                state[('SP34', time_slot)],
+                state[('K3', time_slot)]))
+        print()
+
+for i in range(0, MAX_STEPS_TASK_4):
+    MAX_STEPS = 100
+
+    rooms = ['TP51', 'SP34', 'K3']
+    time_slots = [9, 10, 11, 12, 13, 14, 15, 16]
+    courses = [
+        'MT101','MT102','MT103','MT104','MT105','MT106','MT107',
+        'MT201','MT202','MT203','MT204','MT205','MT206',
+        'MT301','MT302','MT303','MT304',
+        'MT401','MT402','MT403',
+        'MT501','MT502',
+        '     ','     ' # Empty slots
+    ]
+
+    RoomSlot = namedtuple('RoomSlot', ['room', 'time'])
+
+
+    def bookings_conflict(slot1, course1, slot2, course2):
+        '''Checks if two bookings are in conflict'''
+        if course1[2] == 5 and course2[2] == 5:
+            return False
+        return slot1.time == slot2.time and course1[2] == course2[2]
+
+
+    def is_solution(state):
+        for slot1 in state:
+            for slot2 in state:
+                if bookings_conflict(slot1, state[slot1], slot2, state[slot2]) and slot1 != slot2:
+                    return False
+        return True
+
+
+    def conflicts(var, v, swap_with_key, state):
+        # Swap to test the conflicts if keys are swapped
+        dict_swap(var, swap_with_key, current_state)
+
+        counter = 0
+        for slot in state:
+            if bookings_conflict(var, v, slot, state[slot]) and slot != var:
                 counter += 1
-            if self.will_miss_course(booking):
-                counter += 1
-        self.conflicts = counter
-        return self.conflicts
 
-    def __str__(self):
-        print(self.room + ", " + str(self.time) + ", " + self.course)
+        # Swap back
+        dict_swap(var, swap_with_key, current_state)
 
-def print_timetable(bookings):
-    bookings.sort(key = lambda booking: booking.time)
-    print("\n     TP51    SP34    K3\n-----------------------------")
-    i = 0
-    while i < len(bookings):
-        sub_array = bookings[i:i+3]
-        sub_array.sort(key = lambda booking: booking.room)
-
-        if len(sub_array) == 3:
-            print(str('{:>2}'.format(sub_array[0].time)) + "   " + sub_array[2].course + "   " + sub_array[1].course + "   " + sub_array[0].course)
-        if len(sub_array) == 2:
-            print(str('{:>2}'.format(sub_array[0].time)) + "   " + sub_array[1].course + "   " + sub_array[0].course)
-        if len(sub_array) == 1:
-            print(str('{:>2}'.format(sub_array[0].time)) + "   " + sub_array[0].course)
-        i += 3
+        return counter
 
 
-rooms = ['TP51', 'SP34', 'K3']
-times = [9, 10, 11, 12, 13, 14, 15, 16]
-
-courses = [
-    'MT101','MT102','MT103','MT104','MT105','MT106','MT107',
-    'MT201','MT202','MT203','MT204','MT205','MT206',
-    'MT301','MT302','MT303','MT304',
-    'MT401','MT402','MT403',
-    'MT501','MT502'
-]
-
-blocks = []
-for room in rooms:
-    for time in times:
-        blocks.append((room, time))
+    def dict_swap(key1, key2, dict):
+        dict[key1], dict[key2] = dict[key2], dict[key1]
 
 
-MAX_STEPS = 10000
-n_conflicts = 0
-bookings = []
-for i in range(0, len(courses)):
-    bookings.append(Booking(blocks[i], courses))
+    # Find all time blocks for all rooms
+    blocks = []
+    for time in time_slots:
+        for room in rooms:
+            blocks.append(RoomSlot(room, time))
 
-courses = [
-'MT101','MT102','MT103','MT104','MT105','MT106','MT107',
-'MT201','MT202','MT203','MT204','MT205','MT206',
-'MT301','MT302','MT303','MT304',
-'MT401','MT402','MT403',
-'MT501','MT502'
-]
+    # Generate a random initial state
+    # Copy so the courses can be removed without affecting `courses`
+    courses_to_distribute = [c for c in courses]
+    rand.shuffle(courses_to_distribute)
+    current_state = {}
+    for block in blocks:
+        current_state[block] = courses_to_distribute.pop()
 
-for booking in bookings:
-    booking.find_n_conflicts(bookings)
+    # print_timetable(current_state)
 
-rand_booking = None
-for i in range(0, MAX_STEPS):
-    n_conflicts = 0
-    for booking in bookings:
-        booking.find_n_conflicts(bookings)
-        n_conflicts += booking.conflicts
-    # print(n_conflicts)
-    if n_conflicts == 0:
-        print_timetable(bookings)
-        quit()
-    
-    rand_booking = rand.choice([book for book in bookings if book.conflicts > 0 and book != rand_booking])
+    for i in range(MAX_STEPS):
+        # Has solution been found?
+        if is_solution(current_state):
+            # print('Solved in {} steps'.format(i))
+            # print_timetable(current_state)
+            solutions.append(current_state)
+            break
 
-    lowest_conflicts = rand_booking.conflicts
-    best_course = rand_booking.course
-    for course in courses:
-        tmp_booking = rand_booking
-        tmp_booking.course = course
-        tmp_conflicts = tmp_booking.find_n_conflicts(bookings)
+        # TODO Make sure that var is actually in conflict
+        # var = rand.choice(list(current_state.keys()))
+        var = rand.choice(
+            [v for v in list(current_state.keys())
+                if conflicts(v, current_state[v], v, current_state) > 0])
 
-        if tmp_conflicts < lowest_conflicts:
-            best_course = course
-            lowest_conflicts = tmp_conflicts
-    
-    bookings[bookings.index(rand_booking)].course, courses[courses.index(best_course)] = \
-        courses[courses.index(best_course)], bookings[bookings.index(rand_booking)].course
+        # Find value that minimizes conflicts
+        min_conflicts_val = None
+        min_conflicts_swap_key = None
+        min_conflicts = 1e9
+        for key in current_state:
+            v = current_state[key]
+            n_conf = conflicts(var, v, key, current_state)
+            if n_conf < min_conflicts:
+                min_conflicts = n_conf
+                min_conflicts_val = v
+                min_conflicts_swap_key = key
 
-print('Failed to create non-conflicting timetable in {} number of steps'.format(MAX_STEPS))
+        # Swap
+        dict_swap(var, min_conflicts_swap_key, current_state)
+
+print("Solutions found, finding the most preferable schedule:")
+max_pref_conflicts = -1
+best_solution = None
+for solution in solutions:
+    tmp_pref_conflicts = 0
+    tmp_pref_conflicts += count_num_pref_times(solution)
+    tmp_pref_conflicts += count_pref_mt500_times(solution)
+
+    if tmp_pref_conflicts > max_pref_conflicts:
+        max_pref_conflicts = tmp_pref_conflicts
+        best_solution = solution
+print_timetable(best_solution)
