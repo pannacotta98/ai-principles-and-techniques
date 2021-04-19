@@ -24,7 +24,7 @@ print("\nStart:")
 puzzle = Sudoku('..3.2.6..9..3.5..1..18.64....81.29..7.......8..67.82....26.95..8..2.3..9..5.1.3..')
     # depth-first-graph-search: failed
     # backtracking search: 34 seconds
-    # AC3: 0.023 seconds
+    # AC3: 0.023 seconds - failed
     # min conflicts: failed - 71 seconds
     # depth first graph search < min conflicts < backtracking search < AC3
 
@@ -72,8 +72,8 @@ start = time()
 # 2. Solve the puzzle; select ONLY one of the following algorithms
 
 # depth_first_graph_search(puzzle)
-backtracking_search(puzzle)
-# AC3(puzzle)
+# backtracking_search(puzzle)
+AC3(puzzle)
 # min_conflicts(puzzle)
 
 

@@ -1,7 +1,7 @@
 from collections import namedtuple
 import random as rand
 
-MAX_STEPS_TASK_4 = 100
+MAX_STEPS_TASK_4 = 300
 solutions = []
 
 def count_num_pref_times(solution):
@@ -124,10 +124,7 @@ for i in range(0, MAX_STEPS_TASK_4):
     # print_timetable(current_state)
 
     for i in range(MAX_STEPS):
-        # Has solution been found?
         if is_solution(current_state):
-            # print('Solved in {} steps'.format(i))
-            # print_timetable(current_state)
             solutions.append(current_state)
             break
 
