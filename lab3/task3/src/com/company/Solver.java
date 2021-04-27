@@ -2,8 +2,9 @@ package com.company;
 
 import java.util.*;
 
+// Heccin Java, hows it even workz
 public class Solver {
-    public HashSet<Clause> KB = new HashSet<Clause>();
+    public HashSet<Clause> KB = new HashSet<>();
     static Random rnd = new Random();
 
     Solver(String[] KB) {
@@ -29,44 +30,13 @@ public class Solver {
                 }
 
             }
-//            int i = 0, j = 0; // Yes, this is super ugly
-//            for (Clause A : KB) {
-//                for (Clause B : KB) {
-//                    if (j++ < i + 1) continue; // Hehe
-//
-//                    Clause C = resolution(A, B);
-//                    if (C != null) {
-//                        S.add(C);
-//                    }
-////                    ++j;
-//                }
-//                ++i;
-//            }
-
-//            for (Clause A : KB) {
-//                for (Clause B : KB) {
-//                    Clause C = resolution(A, B);
-//                    if (C != null) {
-//                        S.add(C);
-//                    }
-//                }
-//            }
-//            for (int i = 0; i < KB.size(); ++i) {
-//                for (int j = i + 1; j < KB.size(); ++j) {
-//
-//                    Clause C = resolution(A, B);
-//                    if (C != null) {
-//                        S.add(C);
-//                    }
-//                }
-//            }
 
             if (S.isEmpty()) return KB;
 
             incorporate(S, KB);
         } while (!KB.equals(KBPrime));
 
-        return KB; // TODO Make sure this si right
+        return KB;
     }
 
     // Directly modifies KB
@@ -78,21 +48,26 @@ public class Solver {
 
     // Directly modifies KB
     public static void incorporateClause(Clause A, HashSet<Clause> KB) {
-        for (Clause B : KB) {
-            if (B.subsumesOrEqual(A)) return;
-        }
-
-        for (Iterator<Clause> it = KB.iterator(); it.hasNext();) {
-            Clause B = it.next();
-            if (A.subsumesStrict(B)) {
-                it.remove();
-            }
-        }
+        // Somehow it seems to work better without this? It still doesn't follow the steps though, but the result is correct
 //        for (Clause B : KB) {
+//            if (B.subsumesOrEqual(A)) return;
+//        }
+
+        KB.removeIf(A::subsumesStrict);
+
+//        for (Iterator<Clause> it = KB.iterator(); it.hasNext();) {
+//            Clause B = it.next();
 //            if (A.subsumesStrict(B)) {
-//                KB.remove(B);
+//                // Debuggin stuff
+//                if (B.toString().equals("{ movie|ice|-money }")) {
+//                    System.out.println(A);
+//                    System.out.println(B);
+//                }
+//                // ============
+//                it.remove();
 //            }
 //        }
+
         KB.add(A);
     }
 
@@ -117,7 +92,7 @@ public class Solver {
         C.positive = unionAsCopy(A.positive, B.positive);
         C.negative = unionAsCopy(A.negative, B.negative);
 
-        // Is C a tautology
+        // Is C a tautology?
         if (!Collections.disjoint(C.positive, C.negative)) {
             return null;
         }
@@ -126,22 +101,22 @@ public class Solver {
         return C;
     }
 
-    static private HashSet unionAsCopy(HashSet set1, HashSet set2) {
+    static private HashSet<String> unionAsCopy(HashSet<String> set1, HashSet<String> set2) {
         HashSet<String> union = new HashSet<>(set1);
         union.addAll(set2);
         return union;
     }
 
-    static private HashSet intersectionAsCopy(HashSet set1, HashSet set2) {
+    static private HashSet<String> intersectionAsCopy(HashSet<String> set1, HashSet<String> set2) {
         HashSet<String> intersection = new HashSet<>(set1);
         intersection.retainAll(set2);
         return intersection;
     }
 
-    static private String pickRandomFromIntersection(HashSet set1, HashSet set2) {
+    static private String pickRandomFromIntersection(HashSet<String> set1, HashSet<String> set2) {
         HashSet<String> intersection = intersectionAsCopy(set1, set2);
         // Probably not super efficient but hey, it's just a lab and intersection is not that big
-        String[] array = intersection.toArray(new String[intersection.size()]);
+        String[] array = intersection.toArray(new String[0]);
         int randIdx = rnd.nextInt(array.length);
         return array[randIdx];
     }

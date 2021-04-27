@@ -47,9 +47,6 @@ public class Clause {
     }
 
     public boolean subsumesStrict(Clause B) {
-//        return this.subsumesOrEqual(B)
-//                && !this.negative.equals(B.negative)
-//                && !this.positive.equals(B.positive);
         return this.subsumesOrEqual(B) && !B.subsumesOrEqual(this);
     }
 
