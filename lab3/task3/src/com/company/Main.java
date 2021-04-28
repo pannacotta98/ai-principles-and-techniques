@@ -45,6 +45,7 @@ public class Main {
 //        System.out.println(mov.subsumesOrEqual(evilOne));
 //        System.out.println(evilOne.subsumesOrEqual(mov));
 
+        System.out.println("Task A");
         Solver agentBobSolver = new Solver(new String[]{
                 "-sun | -money | ice",
                 "-money | ice | movie",
@@ -53,9 +54,16 @@ public class Main {
 
                 "movie"
         });
-
         HashSet<Clause> result = agentBobSolver.solve();
         System.out.println(result);
+
+        System.out.println("\nTask B: Robbery puzzle");
+        Solver robberySolver = new Solver(new String[]{
+                "A | B | C",
+                "-C | A", // C => A
+                "-B | A | C" // B => (A v B)
+        });
+        System.out.println(robberySolver.solve());
 
     }
 }
