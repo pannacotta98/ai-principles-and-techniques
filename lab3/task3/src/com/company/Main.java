@@ -61,7 +61,7 @@ public class Main {
         Solver robberySolver = new Solver(new String[]{
                 "A | B | C",
                 "-C | A", // C => A
-                "-B | A | C" // B => (A v B)
+                "-B | A | C" // B => (A v C)
         });
         System.out.println(robberySolver.solve());
 

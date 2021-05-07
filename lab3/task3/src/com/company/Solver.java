@@ -48,26 +48,7 @@ public class Solver {
 
     // Directly modifies KB
     public static void incorporateClause(Clause A, HashSet<Clause> KB) {
-        // Somehow it seems to work better without this? It still doesn't follow the steps though, but the result is correct
-//        for (Clause B : KB) {
-//            if (B.subsumesOrEqual(A)) return;
-//        }
-
         KB.removeIf(A::subsumesStrict);
-
-//        for (Iterator<Clause> it = KB.iterator(); it.hasNext();) {
-//            Clause B = it.next();
-//            if (A.subsumesStrict(B)) {
-//                // Debuggin stuff
-//                if (B.toString().equals("{ movie|ice|-money }")) {
-//                    System.out.println(A);
-//                    System.out.println(B);
-//                }
-//                // ============
-//                it.remove();
-//            }
-//        }
-
         KB.add(A);
     }
 
