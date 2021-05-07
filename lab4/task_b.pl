@@ -17,7 +17,7 @@ act(move(X,A,B),
   A #\= B.
 
 
-initial_state([    
+initial_state([
     on(3, 4),
     on(5, 6),
     on(1, 0),
