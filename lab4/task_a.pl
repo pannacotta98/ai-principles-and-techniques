@@ -5,19 +5,19 @@ act(go(X,Y),
   ).
              
 act(push(B,X,Y),
-  [shakey(S), on(S, floor), box(B), in(S,X), in(B,X), connect(X,Y)],
+  [shakey(S), on(S, floor), box(B), in(S,X), in(B,X), connect(X,Y), connect(L, X), light(L,true)],
   [in(S,X), in(B,X)],
   [in(S,Y), in(B,Y)]
   ).
   
 act(climb_up(B),
-  [shakey(S), box(B), on(S, floor), in(S,X), in(B,X)],
+  [shakey(S), box(B), on(S, floor), in(S,X), in(B,X), connect(L, X), light(L,true)],
   [on(S, floor)],
   [on(S, B)]
   ).
 
 act(climb_down(B),
-  [shakey(S), box(B), on(S,B), in(S,X), in(B,X)],
+  [shakey(S), box(B), on(S,B), in(S,X), in(B,X), connect(L, X), light(L,true)],
   [on(S,floor)],
   [on(S,B)]
   ).
@@ -66,6 +66,7 @@ initial_state([
    light(switch2, false),
    light(switch3, false),
    light(switch4, true),
+   light(switchCorridor, true),
 
    connect(switch1, room1),
    connect(room1, switch1),
@@ -83,6 +84,9 @@ initial_state([
    connect(room3, corridor),
    connect(corridor, room3),
    connect(room4, corrdior),
-   connect(corridor, room4)
+   connect(corridor, room4),
+
+   connect(switchCorridor, corridor),
+   connect(corridor, switchCorridor)
 ]).
               
